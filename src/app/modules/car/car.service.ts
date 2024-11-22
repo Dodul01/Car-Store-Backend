@@ -29,9 +29,15 @@ const updateSingleCarFromDB = async (id: string, updates: Partial<TCar>) => {
   return result;
 };
 
+const deleteSingleCarFromDb = async (id: string) => {
+  const result = await Car.deleteOne({ _id: new Types.ObjectId(id) });
+  return result;
+};
+
 export const CarServices = {
   createCarIntoDB,
   getCarFromDB,
   getSingleCarFromDB,
   updateSingleCarFromDB,
+  deleteSingleCarFromDb
 };

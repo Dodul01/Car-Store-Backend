@@ -41,7 +41,7 @@ const getCar = async (req: Request, res: Response) => {
 const getSingleCar = async (req: Request, res: Response) => {
   try {
     const { carId } = req.params;
-    
+
     const result = await CarServices.getSingleCarFromDB(carId);
 
     res.send({
@@ -58,8 +58,50 @@ const getSingleCar = async (req: Request, res: Response) => {
   }
 };
 
+const updateSingleCar = async (req: Request, res: Response) => {
+  try {
+    const { carId } = req.params;
+    const updates = req.body;
+
+    const result = await CarServices.updateSingleCarFromDB(carId, updates);
+
+    res.send({
+      status: true,
+      message: 'Car retrieved successfully',
+      data: result,
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      message: 'Something went wrong!',
+      error,
+    });
+  }
+};
+
+const deleteSingleCar = async (req: Request, res: Response) => {
+  try {
+    const { carId } = req.params;
+    const result = await CarServices.deleteSingleCarFromDb(carId);
+
+    res.send({
+      status: true,
+      message: 'Car deleted successfully',
+      data: result,
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      message: 'Something went wrong!',
+      error,
+    });
+  }
+};
+
 export const CarControllers = {
   createCar,
   getCar,
   getSingleCar,
+  updateSingleCar,
+  deleteSingleCar,
 };
