@@ -24,10 +24,46 @@ const createOderIntoDB = async (orderData: TOrder) => {
 
   await car.save();
 
-  const result = await Order.create(orderData)
+  const result = await Order.create(orderData);
   return result;
+};
+
+const calculateRevenueFromDB = async () => {
+  const result = await Order.aggregate([
+    {
+      $lookup: {
+        from: 'cars',
+        localField: 'car',
+        foreignField: '_id',
+        as: 'carDetails',
+      },
+    },
+    {
+      $unwind: {
+        path: '$carDetails',
+        preserveNullAndEmptyArrays: false,
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        revenue: {
+          $multiply: ['$carDetails.price', '$quantity'],
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalRevenue: { $sum: '$revenue' },
+      },
+    },
+  ]);
+
+  return result.length > 0 ? result[0].totalRevenue : 0;
 };
 
 export const OrderService = {
   createOderIntoDB,
+  calculateRevenueFromDB,
 };
