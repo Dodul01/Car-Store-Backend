@@ -7,8 +7,18 @@ const createCarIntoDB = async (carData: TCar) => {
   return result;
 };
 
-const getCarFromDB = async () => {
-  const result = await Car.find();
+const getCarFromDB = async (searchTerm?: string) => {
+  const query = searchTerm
+    ? {
+        $or: [
+          { brand: { $regex: searchTerm, $options: 'i' } },
+          { model: { $regex: searchTerm, $options: 'i' } },
+          { category: { $regex: searchTerm, $options: 'i' } },
+        ],
+      }
+    : {};
+
+  const result = await Car.find(query);
   return result;
 };
 
@@ -39,5 +49,5 @@ export const CarServices = {
   getCarFromDB,
   getSingleCarFromDB,
   updateSingleCarFromDB,
-  deleteSingleCarFromDb
+  deleteSingleCarFromDb,
 };

@@ -12,6 +12,7 @@ app.use(cors());
 app.use('/api/cars', CarRouter);
 app.use('/api/orders', OrderRouter);
 
+
 app.get('/', (req: Request, res: Response) => {
   res.send({ status: true, message: 'Server is running.' });
 });

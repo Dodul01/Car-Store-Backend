@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { CarServices } from './car.service';
 import { carValidationSchema } from './car.validation';
+// import { ZodError } from 'zod';
 
 const createCar = async (req: Request, res: Response) => {
   try {
@@ -14,17 +15,51 @@ const createCar = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    res.send({
-      status: false,
-      message: 'Something went wrong!',
-      error,
+    res.status(400).send({
+      success: true,
+      message: 'Something Went wrong!',
+      error: error,
     });
+
+    // if (error instanceof ZodError) {
+    //   const validationErrors = error.errors.map((err) => ({
+    //     path: err.path.join('.'),
+    //     message: err.message,
+    //   }));
+
+    //   return res.status(400).send({
+    //     message: 'Validation failed',
+    //     success: false,
+    //     error: {
+    //       name: 'ValidationError',
+    //       errors: validationErrors,
+    //     },
+    //     stack: error.stack,
+    //   });
+    // } else if (error instanceof Error) {
+    //   return res.status(400).send({
+    //     message: 'Validation Error',
+    //     success: false,
+    //     error: {
+    //       name: error.name,
+    //       message: error.message,
+    //     },
+    //     stack: error.stack,
+    //   });
+    // } else {
+    //   return res.status(500).send({
+    //     message: 'An unknown error occurred',
+    //     success: false,
+    //     error: { message: String(error) },
+    //   });
+    // }
   }
 };
 
 const getCar = async (req: Request, res: Response) => {
   try {
-    const result = await CarServices.getCarFromDB();
+    const { searchTerm } = req.query;
+    const result = await CarServices.getCarFromDB(searchTerm as string);
 
     res.send({
       status: true,
@@ -69,15 +104,47 @@ const updateSingleCar = async (req: Request, res: Response) => {
 
     res.send({
       status: true,
-      message: 'Car retrieved successfully',
+      message: 'Car updated successfully',
       data: result,
     });
   } catch (error) {
-    res.send({
-      status: false,
-      message: 'Something went wrong!',
-      error,
+    res.status(400).send({
+      success: true,
+      message: 'Something Went wrong!',
+      error: error,
     });
+    // if (error instanceof ZodError) {
+    //   const validationErrors = error.errors.map((err) => ({
+    //     path: err.path.join('.'),
+    //     message: err.message,
+    //   }));
+
+    //   return res.status(400).send({
+    //     message: 'Validation failed',
+    //     success: false,
+    //     error: {
+    //       name: 'ValidationError',
+    //       errors: validationErrors,
+    //     },
+    //     stack: error.stack,
+    //   });
+    // } else if (error instanceof Error) {
+    //   return res.status(400).send({
+    //     message: 'Validation Error',
+    //     success: false,
+    //     error: {
+    //       name: error.name,
+    //       message: error.message,
+    //     },
+    //     stack: error.stack,
+    //   });
+    // } else {
+    //   return res.status(500).send({
+    //     message: 'An unknown error occurred',
+    //     success: false,
+    //     error: { message: String(error) },
+    //   });
+    // }
   }
 };
 

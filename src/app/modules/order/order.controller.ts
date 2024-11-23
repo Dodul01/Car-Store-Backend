@@ -1,12 +1,50 @@
 import { Request, Response } from 'express';
 import { orderValidationSchema } from './order.validation';
 import { OrderService } from './order.service';
+import { Car } from '../car/car.model';
 
-const createOrder = async (req: Request, res: Response) => {
+const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     const orderData = req.body;
     const zodParsedData = orderValidationSchema.parse(orderData);
-    const result = await OrderService.createOderIntoDB(zodParsedData);
+
+    const car = await Car.findById(zodParsedData.car);
+
+    if (!car) {
+      res.status(404).send({
+        status: false,
+        message: 'Car not found',
+      });
+      return;
+    }
+
+    if (car.quantity <= 0) {
+      res.status(404).send({
+        status: false,
+        message: `${car.brand} ${car.model} is out of stock.`,
+      });
+      return;
+    }
+
+    const totalPrice = car.price * zodParsedData.quantity;
+
+    if (zodParsedData.totalPrice !== totalPrice) {
+      res.status(404).send({
+        sucess: false,
+        message:
+          'Invalid totalPrice. The totalPrice must be quantity * car price.',
+        expectedTotalPrice: totalPrice,
+        providedTotalPrice: zodParsedData.totalPrice,
+      });
+      return;
+    }
+
+    const orderWithPrice = {
+      ...zodParsedData,
+      totalPrice,
+    };
+
+    const result = await OrderService.createOderIntoDB(orderWithPrice);
 
     res.send({
       success: true,
@@ -44,5 +82,5 @@ const getRevenue = async (req: Request, res: Response) => {
 
 export const OrderControllers = {
   createOrder,
-  getRevenue
+  getRevenue,
 };
