@@ -33,6 +33,19 @@ The **Car Store Backend** is a comprehensive RESTful API designed to manage car 
 
 ---
 
+## How to run the project locally
+
+STEP 1: **Clone the Repository**
+```bash
+   git clone <repository-url>
+   cd <repository-folder>
+```
+STEP 2: **Install all packge which helps to run the project**
+```
+    npm install
+```
+---
+
 ## API Endpoints
 
 ### Cars
@@ -53,4 +66,3 @@ The **Car Store Backend** is a comprehensive RESTful API designed to manage car 
 |--------|------------------------|--------------------------------------|
 | POST   | `/api/orders`          | Place a new order                    |
 | GET    | `/api/orders/revenue`  | Get total revenue from orders   |
-
