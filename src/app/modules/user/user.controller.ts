@@ -1,19 +1,33 @@
 import { Request, Response } from 'express';
-import { userValidationSchema } from './user.validation';
+import { UserService } from './user.service';
+import { userValidation } from './user.validation';
 
-const createUser = async (req: Request, res: Response): Promise<void> => {
+const createUser = async (req: Request, res: Response) => {
   try {
-    const payload = req.body;
-    const zodParsedData = userValidationSchema.parse(payload);
-    console.log(zodParsedData);
+    const user = req.body;
+    const zodParseedUser = userValidation.userValidationSchema.parse(user);
+    const userData = { ...zodParseedUser , role: 'seller' as const};
+    const result = await UserService.createUserIntoDB(userData);
 
-    res.status(201).send({
-      status: true,
-      message: 'API REACH SUCCESSFULLY.',
+    res.status(201).json({
+      success: true,
+      message: 'User registered successfully',
+      statusCode: 201,
+      result,
+      data: {
+        _id: result._id,
+        name: result.name,
+        email: result.email,
+      },
     });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
-    console.log('From error ', error.issues);
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Something went wrong',
+      statusCode: 400,
+      error: error,
+      stack: (error as Error).stack,
+    });
   }
 };
 
