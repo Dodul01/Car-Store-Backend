@@ -7,16 +7,37 @@ const createCarIntoDB = async (carData: TCar) => {
   return result;
 };
 
-const getCarFromDB = async (searchTerm?: string) => {
-  const query = searchTerm
-    ? {
-        $or: [
-          { brand: { $regex: searchTerm, $options: 'i' } },
-          { model: { $regex: searchTerm, $options: 'i' } },
-          { category: { $regex: searchTerm, $options: 'i' } },
-        ],
-      }
-    : {};
+const getCarFromDB = async (
+  searchTerm = '',
+  selectedBrand = '',
+  selectedCategory = '',
+  priceRange: string = '0,1000000',
+) => {
+  const query: any = {};
+
+  // Search term filters
+  if (searchTerm) {
+    query.$or = [
+      { brand: { $regex: searchTerm, $options: 'i' } },
+      { model: { $regex: searchTerm, $options: 'i' } },
+      { category: { $regex: searchTerm, $options: 'i' } },
+    ];
+  }
+
+  // Brand filter
+  if (selectedBrand) {
+    query.brand = { $regex: selectedBrand, $options: 'i' };
+  }
+
+  // Category filter
+  if (selectedCategory) {
+    query.category = { $regex: selectedCategory, $options: 'i' };
+  }
+
+  if (priceRange) {
+    const [minPrice, maxPrice] = priceRange.split(',').map(Number); // Convert to numbers
+    query.price = { $gte: minPrice, $lte: maxPrice };
+  }
 
   const result = await Car.find(query);
   return result;

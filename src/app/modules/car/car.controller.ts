@@ -52,8 +52,10 @@ const createCar = async (req: Request, res: Response) => {
 
 const getCar = async (req: Request, res: Response) => {
   try {
-    const { searchTerm } = req.query;
-    const result = await CarServices.getCarFromDB(searchTerm as string);
+    const { searchTerm, selectedBrand, selectedCategory, priceRange } =
+      req.query;
+    const result = await CarServices.getCarFromDB(searchTerm as string, selectedBrand as string, selectedCategory as string, priceRange as string);
+
 
     res.send({
       status: true,

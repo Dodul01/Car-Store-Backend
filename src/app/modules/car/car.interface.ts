@@ -6,6 +6,7 @@ export type TCar = {
   category: 'Sedan' | 'SUV' | 'Truck' | 'Coupe' | 'Convertible';
   description: string;
   quantity: number;
+  image: string;
   inStock: boolean;
   createdAt?: Date;
   updatedAt?: Date;

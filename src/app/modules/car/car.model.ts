@@ -14,6 +14,7 @@ const carSchema = new Schema<TCar>(
         message: '{VALUE} is not a valid category.',
       },
     },
+    image: { type: String, required: [true, 'Image is required'] },
     description: { type: String, required: [true, 'Description is required.'] },
     quantity: { type: Number, required: [true, 'Quantity is required.'] },
     inStock: { type: Boolean, required: [true, 'Stock value is required'] },

@@ -7,7 +7,7 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     const orderData = req.body;
     const zodParsedData = orderValidationSchema.parse(orderData);
-
+    
     const car = await Car.findById(zodParsedData.car);
 
     if (!car) {
