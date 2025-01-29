@@ -2,12 +2,13 @@ import { Request, Response } from 'express';
 import { orderValidationSchema } from './order.validation';
 import { OrderService } from './order.service';
 import { Car } from '../car/car.model';
+import { TOrderStatus } from './order.interface';
 
 const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     const orderData = req.body;
     const zodParsedData = orderValidationSchema.parse(orderData);
-    
+
     const car = await Car.findById(zodParsedData.car);
 
     if (!car) {
@@ -42,6 +43,7 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
     const orderWithPrice = {
       ...zodParsedData,
       totalPrice,
+      status: 'Pending' as TOrderStatus,
     };
 
     const result = await OrderService.createOderIntoDB(orderWithPrice);
@@ -50,6 +52,25 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
       success: true,
       message: 'Order created successfully',
       data: result,
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      message: 'Something went wrong!',
+      error,
+    });
+  }
+};
+
+const getOrders = async (req: Request, res: Response) => {
+  try {
+    const email = req.params.email;
+    const totalOrder = await OrderService.getOrdersFromDB(email);
+
+    res.send({
+      status: true,
+      message: 'Order Retrived successfully.',
+      data: totalOrder,
     });
   } catch (error) {
     res.send({
@@ -83,4 +104,5 @@ const getRevenue = async (req: Request, res: Response) => {
 export const OrderControllers = {
   createOrder,
   getRevenue,
+  getOrders,
 };

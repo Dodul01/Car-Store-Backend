@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.post('/', auth('seller'), OrderControllers.createOrder);
 router.get('/revenue', auth('admin'), OrderControllers.getRevenue);
+router.get('/:email', auth('seller', 'admin'), OrderControllers.getOrders);
 
 export const OrderRouter = router;

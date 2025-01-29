@@ -7,6 +7,11 @@ const orderSchema = new Schema<TOrder>(
     car: { type: Types.ObjectId, ref: 'Car', required: true },
     quantity: { type: Number, required: [true, 'Quantity is required.'] },
     totalPrice: { type: Number, required: [true, 'Total price is required.'] },
+    status: {
+      type: String,
+      enum: ['Pending', 'Processing', 'Shipped', 'Delivered'],
+      default: 'Pending',
+    },
   },
   {
     timestamps: true,

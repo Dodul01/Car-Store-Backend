@@ -1,4 +1,5 @@
 // import { Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { Car } from '../car/car.model';
 import { TOrder } from './order.interface';
 import { Order } from './order.model';
@@ -26,6 +27,28 @@ const createOderIntoDB = async (orderData: TOrder) => {
 
   const result = await Order.create(orderData);
   return result;
+};
+
+const getOrdersFromDB = async (email: string) => {
+  try {
+    // Find all orders for the given email
+    const findOrder = await Order.aggregate([{ $match: { email } }]);
+
+    // Find all cars related to the orders
+    const findCars = await Promise.all(
+      findOrder.map((order) =>
+        Car.aggregate([{ $match: { _id: new Types.ObjectId(order.car) } }]),
+      ),
+    );
+
+    // Flatten the result if necessary
+    const cars = findCars.flat();
+
+    return { orders: findOrder, cars };
+  } catch (error) {
+    console.error('Error fetching orders and cars:', error);
+    throw error;
+  }
 };
 
 const calculateRevenueFromDB = async () => {
@@ -66,4 +89,5 @@ const calculateRevenueFromDB = async () => {
 export const OrderService = {
   createOderIntoDB,
   calculateRevenueFromDB,
+  getOrdersFromDB,
 };

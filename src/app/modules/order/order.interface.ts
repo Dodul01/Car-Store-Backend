@@ -1,4 +1,6 @@
-import { Schema, } from 'mongoose';
+import { Schema } from 'mongoose';
+
+export type TOrderStatus = 'Pending' | 'Processing' | 'Shipped' | 'Delivered';
 
 export type TOrder = {
   email: string;
@@ -7,4 +9,5 @@ export type TOrder = {
   totalPrice: number;
   createdAt?: Date;
   updatedAt?: Date;
+  status: TOrderStatus;
 };
