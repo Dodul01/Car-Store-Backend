@@ -4,4 +4,5 @@ export interface TUser {
   password: string;
   role: 'admin' | 'seller';
   isActive: boolean;
+  address?: string;
 }

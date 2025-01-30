@@ -10,4 +10,14 @@ export type TOrder = {
   createdAt?: Date;
   updatedAt?: Date;
   status: TOrderStatus;
+  address: string;
+  phone: string;
+  city: string;
+  id: string;
+  paymentMethod?: {
+    id: string;
+    status: string;
+    amount: number;
+    createdAt: number;
+  };
 };

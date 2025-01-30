@@ -1,31 +1,53 @@
 import { Types } from 'mongoose';
 import { Car } from '../car/car.model';
-import { TOrder } from './order.interface';
 import { Order } from './order.model';
+import Stripe from 'stripe';
 
-const createOderIntoDB = async (orderData: TOrder) => {
-  const { car: carId, quantity } = orderData;
+const stripe = new Stripe(
+  'sk_test_51PcPm62MP0L90Yjv5rrNJzlct5wUiAmxGXfFWqCdzz5Sjka70yrTPbHFsTjrbXRqs9dSy1Ad4DuduAY6iIOk5I9e00dVeD87uY',
+);
 
-  const car = await Car.findById(carId);
+const createOderIntoDB = async (orderData: any, ip: any) => {
+  try {
+    // console.log(orderData);
 
-  if (!car) {
-    throw new Error('Car not found.');
+    const car = await Car.findById(orderData.car);
+    if (!car) {
+      throw new Error('Car not found.');
+    }
+
+    if (car.quantity < orderData.quantity) {
+      throw new Error('Insufficient stock.');
+    }
+
+    car.quantity -= orderData.quantity;
+    if (car.quantity === 0) {
+      car.inStock = false;
+    }
+    await car.save();
+
+    const orderResponse = await Order.create(orderData);
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: orderData.totalPrice * 100,
+      currency: 'usd',
+      payment_method_types: ['card'],
+      receipt_email: orderData.email,
+      metadata: {
+        carId: car._id.toString(),
+        quantity: orderData.quantity.toString(),
+      },
+    });
+
+    await stripe.paymentIntents.confirm(paymentIntent.id, {
+      payment_method: orderData.id,
+    });
+
+    return orderResponse;
+  } catch (error) {
+    console.error('Error creating order or confirming payment:', error);
+    throw new Error('Order creation or payment confirmation failed');
   }
-
-  if (car.quantity < quantity) {
-    throw new Error('Insufficient stock.');
-  }
-
-  car.quantity -= quantity;
-
-  if (car.quantity === 0) {
-    car.inStock = false;
-  }
-
-  await car.save();
-
-  const result = await Order.create(orderData);
-  return result;
 };
 
 const updateOrderStatusIntoDB = async (id: string, data: any) => {
@@ -34,7 +56,7 @@ const updateOrderStatusIntoDB = async (id: string, data: any) => {
     { $set: data },
     { new: true },
   );
-  return result
+  return result;
 };
 
 const deleteOrderFromDB = async (id: string) => {
@@ -130,4 +152,5 @@ export const OrderService = {
   getAllOrdersFromDB,
   deleteOrderFromDB,
   updateOrderStatusIntoDB,
+  // verifyPayment,
 };

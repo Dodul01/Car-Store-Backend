@@ -13,6 +13,7 @@ const orderSchema = new Schema<TOrder>(
       default: 'Pending',
     },
   },
+
   {
     timestamps: true,
   },

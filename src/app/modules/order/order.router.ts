@@ -7,7 +7,12 @@ const router = express.Router();
 router.post('/', auth('seller'), OrderControllers.createOrder);
 router.get('/allOrders', auth('admin'), OrderControllers.getAllOrders);
 router.get('/revenue', auth('admin'), OrderControllers.getRevenue);
-router.put('/order-status/:id', auth('admin'), OrderControllers.updateOrderStatus);
+// router.get('/verify', auth('seller'), OrderControllers.verifyPayment);
+router.put(
+  '/order-status/:id',
+  auth('admin'),
+  OrderControllers.updateOrderStatus,
+);
 router.delete('/:id', auth('admin', 'seller'), OrderControllers.deleteOrder);
 router.get('/:email', auth('seller', 'admin'), OrderControllers.getOrders);
 

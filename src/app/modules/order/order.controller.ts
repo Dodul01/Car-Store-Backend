@@ -7,6 +7,8 @@ import { TOrderStatus } from './order.interface';
 const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     const orderData = req.body;
+    // console.log(orderData);
+
     const zodParsedData = orderValidationSchema.parse(orderData);
 
     const car = await Car.findById(zodParsedData.car);
@@ -46,7 +48,7 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
       status: 'Pending' as TOrderStatus,
     };
 
-    const result = await OrderService.createOderIntoDB(orderWithPrice);
+    const result = await OrderService.createOderIntoDB(orderWithPrice, req.ip);
 
     res.send({
       success: true,
@@ -62,9 +64,28 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+// const verifyPayment = async (req: Request, res: Response) => {
+//   try {
+//     const order = await OrderService.verifyPayment(
+//       req.query.order_id as string,
+//     );
+
+//     res.send({
+//       status: true,
+//       message: 'Order verifyed successfully.',
+//       data: order,
+//     });
+//   } catch (error) {
+//     res.send({
+//       status: false,
+//       message: 'Something went wrong!',
+//       error,
+//     });
+//   }
+// };
+
 const getOrders = async (req: Request, res: Response) => {
   try {
-
     const email = req.params.email;
     const totalOrder = await OrderService.getOrdersFromDB(email);
 
@@ -168,4 +189,5 @@ export const OrderControllers = {
   getAllOrders,
   deleteOrder,
   updateOrderStatus,
+  // verifyPayment,
 };

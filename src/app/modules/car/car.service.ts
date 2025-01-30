@@ -14,7 +14,7 @@ const getCarFromDB = async (
   priceRange: string = '0,1000000',
 ) => {
   const query: any = {};
-
+  
   // Search term filters
   if (searchTerm) {
     query.$or = [
