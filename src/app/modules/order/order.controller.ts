@@ -64,6 +64,7 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
 
 const getOrders = async (req: Request, res: Response) => {
   try {
+
     const email = req.params.email;
     const totalOrder = await OrderService.getOrdersFromDB(email);
 
@@ -71,6 +72,45 @@ const getOrders = async (req: Request, res: Response) => {
       status: true,
       message: 'Order Retrived successfully.',
       data: totalOrder,
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      message: 'Something went wrong!',
+      error,
+    });
+  }
+};
+
+const updateOrderStatus = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const data = req.body;
+    const result = await OrderService.updateOrderStatusIntoDB(id, data);
+
+    res.send({
+      status: true,
+      message: 'Status updated successfully.',
+      data: result,
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      message: 'Something went wrong!',
+      error,
+    });
+  }
+};
+
+const deleteOrder = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const result = await OrderService.deleteOrderFromDB(id);
+
+    res.send({
+      status: true,
+      message: 'Order deleted successfully.',
+      data: result,
     });
   } catch (error) {
     res.send({
@@ -101,8 +141,31 @@ const getRevenue = async (req: Request, res: Response) => {
   }
 };
 
+const getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const allOrders = await OrderService.getAllOrdersFromDB();
+
+    res.send({
+      status: true,
+      message: 'All Order Retrived successfully',
+      data: {
+        allOrders,
+      },
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      message: 'Something went wrong!',
+      error,
+    });
+  }
+};
+
 export const OrderControllers = {
   createOrder,
   getRevenue,
   getOrders,
+  getAllOrders,
+  deleteOrder,
+  updateOrderStatus,
 };

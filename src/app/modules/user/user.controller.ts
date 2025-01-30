@@ -6,7 +6,11 @@ const createUser = async (req: Request, res: Response) => {
   try {
     const user = req.body;
     const zodParseedUser = userValidation.userValidationSchema.parse(user);
-    const userData = { ...zodParseedUser , role: 'seller' as const};
+    const userData = {
+      ...zodParseedUser,
+      role: 'seller' as const,
+      isActive: true,
+    };
     const result = await UserService.createUserIntoDB(userData);
 
     res.status(201).json({
@@ -31,6 +35,49 @@ const createUser = async (req: Request, res: Response) => {
   }
 };
 
+const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const allUsers = await UserService.getUserFromDB();
+
+    res.send({
+      status: true,
+      message: 'All Users Retrived successfully',
+      data: {
+        allUsers,
+      },
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      message: 'Something went wrong!',
+      error,
+    });
+  }
+};
+
+const blockUser = async (req: Request, res: Response) => {
+  try {
+    const email = req.params.email;
+    const result = await UserService.blockUserFromDB(email);
+
+    res.send({
+      status: true,
+      message: 'User blocked successfully',
+      data: {
+        result,
+      },
+    });
+  } catch (error) {
+    res.send({
+      status: false,
+      message: 'Something went wrong!',
+      error,
+    });
+  }
+};
+
 export const UserControllers = {
   createUser,
+  getAllUsers,
+  blockUser
 };

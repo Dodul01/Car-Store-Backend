@@ -1,4 +1,3 @@
-// import { Types } from 'mongoose';
 import { Types } from 'mongoose';
 import { Car } from '../car/car.model';
 import { TOrder } from './order.interface';
@@ -27,6 +26,39 @@ const createOderIntoDB = async (orderData: TOrder) => {
 
   const result = await Order.create(orderData);
   return result;
+};
+
+const updateOrderStatusIntoDB = async (id: string, data: any) => {
+  const result = await Order.findByIdAndUpdate(
+    id,
+    { $set: data },
+    { new: true },
+  );
+  return result
+};
+
+const deleteOrderFromDB = async (id: string) => {
+  try {
+    const order = await Order.findById(id);
+
+    if (!order) {
+      throw new Error('Order not found.');
+    }
+
+    const car = await Car.findById(order.car);
+    if (car) {
+      car.quantity += order.quantity;
+      car.inStock = true;
+      await car.save();
+    }
+
+    const result = await Order.findByIdAndDelete(id);
+
+    return result;
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    throw error;
+  }
 };
 
 const getOrdersFromDB = async (email: string) => {
@@ -86,8 +118,16 @@ const calculateRevenueFromDB = async () => {
   return result.length > 0 ? result[0].totalRevenue : 0;
 };
 
+const getAllOrdersFromDB = async () => {
+  const orders = Order.find();
+  return orders;
+};
+
 export const OrderService = {
   createOderIntoDB,
   calculateRevenueFromDB,
   getOrdersFromDB,
+  getAllOrdersFromDB,
+  deleteOrderFromDB,
+  updateOrderStatusIntoDB,
 };

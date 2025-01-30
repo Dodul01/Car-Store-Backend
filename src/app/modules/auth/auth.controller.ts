@@ -37,6 +37,38 @@ const loginUser = async (req: Request, res: Response) => {
   }
 };
 
+
+const updateUserPassword = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.id;
+    const { currentPassword, newPassword } = req.body;
+
+    // Validate request body
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Both current and new password are required',
+        statusCode: 400,
+      });
+    }
+
+    const result = await AuthServices.updatePassword(
+      { currentPassword, newPassword },
+      userId,
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'Password updated successfully',
+      statusCode: 200,
+      data: result,
+    });
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
 export const AuthControllers = {
   loginUser,
+  updateUserPassword,
 };

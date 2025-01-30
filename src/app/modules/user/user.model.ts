@@ -22,6 +22,10 @@ const userSchema = new Schema<TUser>({
     enum: ['admin', 'seller'],
     default: 'seller',
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 userSchema.pre('save', async function (next) {
