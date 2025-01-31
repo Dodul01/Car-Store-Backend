@@ -8,7 +8,7 @@ const app: Application = express();
 
 //Parser
 app.use(express.json());
-app.use(cors({ origin: ['http://localhost:5173'], credentials: true }));
+app.use(cors({ origin: ['https://assignment-four-orpin.vercel.app'], credentials: true }));
 
 // Application Router
 app.use('/api/cars', CarRouter);
