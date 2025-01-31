@@ -74,22 +74,48 @@ STEP 4: **Start the server with the following command**
 ---
 
 ## API Endpoints
+---
 
-### Cars
+## Cars
 
-| Method | Endpoint        | Description                     |
-| ------ | --------------- | ------------------------------- |
-| GET    | `/api/cars`     | Get all cars in the inventory   |
-| POST   | `/api/cars`     | Add a new car to the inventory  |
-| GET    | `/api/cars/:id` | Get details of a specific car   |
-| PUT    | `/api/cars/:id` | Update car details              |
-| DELETE | `/api/cars/:id` | Delete a car from the inventory |
+| Method  | Endpoint          | Description                      | Auth Required |
+| ------- | ---------------- | -------------------------------- | ------------- |
+| POST    | `/api/cars`       | Create a new car                | Admin         |
+| GET     | `/api/cars`       | Get all cars                    | No            |
+| GET     | `/api/cars/:carId` | Get details of a specific car    | No            |
+| PUT     | `/api/cars/:carId` | Update car details              | Admin         |
+| DELETE  | `/api/cars/:carId` | Delete a car                    | Admin         |
 
 ---
 
-### Orders
+## Orders
 
-| Method | Endpoint              | Description                   |
-| ------ | --------------------- | ----------------------------- |
-| POST   | `/api/orders`         | Place a new order             |
-| GET    | `/api/orders/revenue` | Get total revenue from orders |
+| Method  | Endpoint                  | Description                     | Auth Required |
+| ------- | ------------------------- | ------------------------------- | ------------- |
+| POST    | `/api/orders`              | Place a new order               | User        |
+| GET     | `/api/orders/allOrders`    | Get all orders                  | Admin         |
+| GET     | `/api/orders/revenue`      | Get total revenue from orders   | Admin         |
+| PUT     | `/api/orders/order-status/:id` | Update order status         | Admin         |
+| DELETE  | `/api/orders/:id`          | Delete an order                 | Admin, User |
+| GET     | `/api/orders/:email`       | Get orders for a specific user  | User, Admin |
+
+---
+
+## Users
+
+| Method  | Endpoint                  | Description                      | Auth Required |
+| ------- | ------------------------- | -------------------------------- | ------------- |
+| POST    | `/api/users/create-user`  | Create a new user                | No            |
+| PUT     | `/api/users/block-user/:email` | Block a user                  | Admin         |
+| GET     | `/api/users/all-users`    | Get all users                    | Admin         |
+
+---
+
+## Authentication
+
+| Method  | Endpoint                          | Description                      | Auth Required |
+| ------- | --------------------------------- | -------------------------------- | ------------- |
+| POST    | `/api/auth/login`                | User login                       | No            |
+| PUT     | `/api/auth/update-password/:id`  | Update user password             | No            |
+
+---
